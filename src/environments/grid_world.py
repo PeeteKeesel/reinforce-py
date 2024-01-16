@@ -1,4 +1,12 @@
 
+"""NOTES 
+- Start is in (0,0)
+- Goal is in the center () - reward +1
+    - If achieved, agent is reset to (0,0)
+"""
+
+import random
+
 # The following wall positions are as in 
 #   https://cs.stanford.edu/people/karpathy/reinforcejs/gridworld_td.html
 WALLS = [
@@ -17,6 +25,24 @@ WALLS = [
     (7, 4)        
 ]
 
+NEGATIVE_STATES = [
+    (3,3),
+    (4,5),
+    (4,6),
+    (5,6),
+    (5,8),
+    (6,8),
+    (7,6),
+    (6,6),
+    (4,6)
+]
+
+RED_BACKGROUND = '\033[41m'     # Red background for negative states
+GREEN_BACKGROUND = '\033[42m'   # Green background for the goal
+WHITE_BACKGROUND = '\033[47m'   # White background for other states
+GREY_BACKGROUND = '\033[100m'   # Grey background for walls
+BLUE_BACKGROUND = '\033[44m'   # Blue background for the agent
+RESET = '\033[0m'               # Reset to default
 
 
 class GridWorld:
@@ -24,7 +50,17 @@ class GridWorld:
         """Initialize the gridworld. The default size is an in REINFORCEjs."""
         self.size = size
         self.walls = walls if walls else []
+        self.action_space = self.ActionSpace()
+
         self.reset()
+
+    class ActionSpace:
+        def __init__(self):
+            # Define the action space: 0 = up, 1 = right, 2 = down, 3 = left
+            self.actions = [0, 1, 2, 3]
+
+        def sample(self):
+            return random.choice(self.actions)        
 
     def reset(self):
         # Start position
@@ -32,8 +68,8 @@ class GridWorld:
         self.y = 0
 
         # Define the goal position
-        self.goal_x = self.size - 1
-        self.goal_y = self.size - 1
+        self.goal_x = 5
+        self.goal_y = 5
 
         return (self.x, self.y)
 
@@ -57,19 +93,20 @@ class GridWorld:
             new_x -= 1
 
         # Check if the new position is a wall
-        print((new_x, new_y))
-        print((new_x, new_y) in self.walls)
-        print((2,2) in WALLS)
-        print((2,3) in WALLS)
         if (new_x, new_y) in self.walls:
-            reward = -10  # Negative reward for hitting a wall
+            print(f"{4*' '}Ive tried to walk into a wall.")
+            reward = 0  # Reward for hitting a wall
             done = False
-            print(f"hallo: x={self.x} y={self.y} new_x:{new_x} new_y:{new_y}")
         else:
             # Update position if it's not a wall
             self.x, self.y = new_x, new_y
             # Check if the goal is reached
-            reward = 100 if (self.x, self.y) == (self.goal_x, self.goal_y) else -1
+            if (self.x, self.y) == (self.goal_x, self.goal_y):
+                reward = 1
+            elif (self.x, self.y) in NEGATIVE_STATES:
+                reward = -1
+            else: 
+                reward = 0
             done = (self.x, self.y) == (self.goal_x, self.goal_y)
 
         return (self.x, self.y), reward, done
@@ -83,11 +120,13 @@ class GridWorld:
         for i in range(self.size):
             for j in range(self.size):
                 if (i, j) == (self.x, self.y):
-                    print('A', end=' ')
+                    print(BLUE_BACKGROUND + ' A ' + RESET, end='')
                 elif (i, j) == (self.goal_x, self.goal_y):
-                    print('G', end=' ')
+                    print(GREEN_BACKGROUND + ' G ' + RESET, end='')
                 elif (i, j) in WALLS:
-                    print('#', end=' ')
+                    print(GREY_BACKGROUND + '   ' + RESET, end='')
+                elif (i, j) in NEGATIVE_STATES:
+                    print(RED_BACKGROUND + ' . ' + RESET, end='')
                 else:
-                    print('.', end=' ')
+                    print(WHITE_BACKGROUND + ' . ' + RESET, end='')
             print()

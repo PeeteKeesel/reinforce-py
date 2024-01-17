@@ -94,7 +94,7 @@ class GridWorld:
 
         # Check if the new position is a wall
         if (new_x, new_y) in self.walls:
-            print(f"{4*' '}Ive tried to walk into a wall.")
+            # print(f"{4*' '}Ive tried to walk into a wall.")
             reward = 0  # Reward for hitting a wall
             done = False
         else:

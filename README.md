@@ -4,6 +4,10 @@ Implementation of the [REINFORCEjs library](https://github.com/karpathy/reinforc
 
 > Note that this is not a 1-to-1 implementation in Python. The idea is simply trying to develop similar algorithms and demos as shown in Kaparthy's library.
 
+The current version looks as follows:
+
+![version_0_0_1](imgs/version_0_0_1.png)
+
 ## 📝 ToDo's
 
 - [ ] Implement the GridWorld environment

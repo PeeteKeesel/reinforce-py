@@ -17,6 +17,10 @@ logger = logging.getLogger(__name__)
 ACTION_SPACE = [0, 1, 2, 3]
 ACTION_ARROW_MAPPING = {0: '↑', 1: '→', 2: '↓', 3: '←'}
 
+import random
+
+random.seed(1)
+
 # -----------------------------------------------------------------------------
 def parse_args(args=None):
     parser = ArgumentParser(description='REINFORCEpy - GridWorld')
@@ -84,6 +88,8 @@ def main(args=None):
         # VALUE ITERATION #
         # ----------------------- #
         elif args.algo == 'value_iteration':
+            env.render()
+
             # Initialize the value function.
             values = {(x, y): 0 for x in range(args.size) for y in range(args.size)}
             values[(args.size - 1, args.size - 1)] = 1
@@ -96,12 +102,14 @@ def main(args=None):
             # Run the value iteration algorithm.
             value_iteration.value_iteration(max_iterations=10, theta=0.001)
 
+            curr_trajectory = []
+
             # Run until done or maximal number of timesteps is reached.
             while not done:
 
                 # Choose an action.
                 action = value_iteration.get_best_action(state)
-                print("best action: ", action)
+                print("best action: ", env.action_space.action_to_direction.get(action))
 
                 # Perform the action.
                 state, reward, done = env.step(action)
@@ -116,9 +124,14 @@ def main(args=None):
                     env.render()
                     print(f"s: {state}, a: {ACTION_ARROW_MAPPING.get(action)}, R: {reward}, Sum(R): {cumulative_reward} Done: {done}")
 
+                if done:
+                    break
+
                 timestep += 1
                 if timestep == args.timesteps: 
                     break
+
+            print(f"episode_actions: {[env.action_space.action_to_direction.get(a) for a in episode_actions]}")
 
         # All actions and rewards of all episodes
         episodes_actions.append(episode_actions)

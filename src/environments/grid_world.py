@@ -64,6 +64,29 @@ class GridWorld:
         def __init__(self):
             # Define the action space: 0 = up, 1 = right, 2 = down, 3 = left
             self.actions = [0, 1, 2, 3]
+            self.UP = 0
+            self.RIGHT = 1
+            self.DOWN = 2
+            self.LEFT = 3
+
+            self.action_to_direction = {
+                0: '↑', 
+                1: '→', 
+                2: '↓', 
+                3: '←'
+            }
+            self.direction_to_action = {
+                '↑': 0, 
+                '→': 1, 
+                '↓': 2, 
+                '←': 3
+            }
+            self.action_to_description = {
+                0: 'UP', 
+                1: 'RIGHT', 
+                2: 'DOWN', 
+                3: 'LEFT'
+            }
 
         def sample(self):
             return random.choice(self.actions)
@@ -92,14 +115,14 @@ class GridWorld:
         """
         new_x, new_y = self.x, self.y  # Set current position as default
 
-        if action == 0 and self.y > 0:  # Up
-            new_y -= 1
-        elif action == 1 and self.x < self.size - 1:  # Right
-            new_x += 1
-        elif action == 2 and self.y < self.size - 1:  # Down
-            new_y += 1
-        elif action == 3 and self.x > 0:  # Left
+        if action == self.action_space.UP and self.x > 0:  # Up
             new_x -= 1
+        elif action == self.action_space.RIGHT and self.y < self.size - 1:  # Right
+            new_y += 1
+        elif action == self.action_space.DOWN and self.x < self.size - 1:  # Down
+            new_x += 1
+        elif action == self.action_space.LEFT and self.y > 0:  # Left
+            new_y -= 1
 
         # Check if the new position is a wall
         if (new_x, new_y) in self.walls:
@@ -125,17 +148,19 @@ class GridWorld:
         x, y = state[0], state[1]  # Set current position as default
         new_x, new_y = x, y  # Set current position as default
 
-        if action == 0 and y > 0:  # Up
-            new_y -= 1
-        elif action == 1 and x < self.size - 1:  # Right
-            new_x += 1
-        elif action == 2 and y < self.size - 1:  # Down
-            new_y += 1
-        elif action == 3 and x > 0:  # Left
+        if action == self.action_space.UP and x > 0:  # Up
             new_x -= 1
+        elif action == self.action_space.RIGHT and y < self.size - 1:  # Right
+            new_y += 1
+        elif action == self.action_space.DOWN and x < self.size - 1:  # Down
+            new_x += 1
+        elif action == self.action_space.LEFT and y > 0:  # Left
+            new_y -= 1
+
+        print(f"(new_x, new_y): {(new_x, new_y)}   self.size: {self.size}")
 
         if (new_x, new_y) in self.walls:
-            # print(f"{4*' '}Ive tried to walk into a wall.")
+            print(f"{4*' '}Ive tried to walk into a wall after {self.action_space.action_to_description.get(action)}.")
             # New is old since we couldnt move.
             new_x, new_y = x, y 
             reward = 0  # Reward for hitting a wall

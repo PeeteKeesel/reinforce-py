@@ -52,8 +52,13 @@ class GridWorld:
         self.size = size
         self.walls = walls if walls else []
         self.action_space = self.ActionSpace()
+        self.gamma = 0.9  # discount factor
+        self.states = [(x, y) for x in range(self.size) for y in range(self.size)]
 
         self.reset()
+
+    def get_states(self):
+        return self.states
 
     class ActionSpace:
         def __init__(self):
@@ -61,7 +66,10 @@ class GridWorld:
             self.actions = [0, 1, 2, 3]
 
         def sample(self):
-            return random.choice(self.actions)        
+            return random.choice(self.actions)
+
+    def get_actions(self, state):
+        return self.action_space.actions
 
     def reset(self):
         # Start position
@@ -111,6 +119,43 @@ class GridWorld:
             done = (self.x, self.y) == (self.goal_x, self.goal_y)
 
         return (self.x, self.y), reward, done
+    
+    def simulate_action(self, state, action):
+        """Get the reward for a given state and action, w/o taking the action."""
+        x, y = state[0], state[1]  # Set current position as default
+        new_x, new_y = x, y  # Set current position as default
+
+        if action == 0 and y > 0:  # Up
+            new_y -= 1
+        elif action == 1 and x < self.size - 1:  # Right
+            new_x += 1
+        elif action == 2 and y < self.size - 1:  # Down
+            new_y += 1
+        elif action == 3 and x > 0:  # Left
+            new_x -= 1
+
+        if (new_x, new_y) in self.walls:
+            # print(f"{4*' '}Ive tried to walk into a wall.")
+            # New is old since we couldnt move.
+            new_x, new_y = x, y 
+            reward = 0  # Reward for hitting a wall
+            done = False
+        else:
+            # Update position if it's not a wall
+            # self.x, self.y = new_x, new_y
+            # Check if the goal is reached
+            if (new_x, new_y) == (self.goal_x, self.goal_y):
+                reward = 1
+            elif (new_x, new_y) in NEGATIVE_STATES:
+                reward = -1
+            else: 
+                reward = 0
+            done = (new_x, new_y) == (self.goal_x, self.goal_y)
+
+        return (new_x, new_y), reward, done
+
+    def get_transition_prob(self, state, action):
+        return 1.0
 
     def render(self):
         """

@@ -8,6 +8,17 @@ The current version looks as follows:
 
 ![version_0_0_1](imgs/version_0_0_1.png)
 
+Run using 
+
+```bash
+python main.py \
+    --verbose=1 \
+    --episodes=1 \
+    --timesteps=5 \
+    --size=10 \
+    --algo=value_iteration
+```
+
 ## 📝 ToDo's
 
 - [ ] Implement the GridWorld environment

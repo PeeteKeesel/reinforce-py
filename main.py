@@ -107,7 +107,7 @@ def main(args=None):
                                              initial_values=values)
 
             # Run the value iteration algorithm.
-            value_iteration.value_iteration(max_iterations=2, theta=0.001)
+            value_iteration.value_iteration(max_iterations=100, theta=0.001)
 
             curr_trajectory = []
 

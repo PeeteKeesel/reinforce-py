@@ -4,9 +4,22 @@ Implementation of the [REINFORCEjs library](https://github.com/karpathy/reinforc
 
 > Note that this is not a 1-to-1 implementation in Python. The idea is simply trying to develop similar algorithms and demos as shown in Kaparthy's library.
 
-The current version looks as follows:
+## Value Iteration 
 
-![version_0_0_1](imgs/version_0_0_1.png)
+We started by implemented the most trivial algorithm, _Value Iteration_, from scratch. 
+
+The following shows an example of the value function for different iterations.
+
+<div style="display: flex; justify-content: space-between;">
+    <figure style="text-align: center; width: 45%;">
+        <img src="imgs/gridworld_10x10_after_1_iter.png" alt="version_0_0_1" width="100%">
+        <figcaption>After 1 value iteration.</figcaption>
+    </figure>
+    <figure style="text-align: center; width: 45%;">
+        <img src="imgs/gridworld_10x10_after_100_iters.png" alt="version_0_0_1" width="100%">
+        <figcaption>After 100 value iterations.</figcaption>
+    </figure>
+</div>
 
 
 # 🏃 How to Run?

@@ -10,9 +10,9 @@ We started by implemented the most trivial algorithm, _Value Iteration_, from sc
 
 The following shows an example of the value function for different iterations.
 
-<!-- <img src="imgs/gridworld_10x10_after_1_iter.png">  -->
+![After 1 iteration](imgs/gridworld_10x10_after_1_iter.png)
 
-| ![imgs/gridworld_10x10_after_1_iter.png](imgs/gridworld_10x10_after_1_iter.png) | ![imgs/gridworld_10x10_after_100_iters.png](imgs/gridworld_10x10_after_100_iters.png) |
+| ![After 1 iteration](imgs/gridworld_10x10_after_1_iter.png) | ![After 100 iterations](imgs/gridworld_10x10_after_100_iters.png) |
 |:--:| :--:| 
 | Value function after $1$ iteration | Value function after $100$ iteration |
 

@@ -91,11 +91,13 @@ def main(args=None):
         # VALUE ITERATION #
         # ----------------------- #
         elif args.algo == 'value_iteration':
-            env.render(large=args.render_large, with_values=args.render_with_values)
+            
 
             # Initialize the value function.
             # values = {(x, y): 0 for x in range(args.grid_size) for y in range(args.grid_size)}
             values = np.zeros((args.grid_size, args.grid_size))
+
+            env.render(large=args.render_large, values=values)
 
             # values[(args.grid_size - 1, args.grid_size - 1)] = 0
             print(values)
@@ -105,7 +107,7 @@ def main(args=None):
                                              initial_values=values)
 
             # Run the value iteration algorithm.
-            value_iteration.value_iteration(max_iterations=1, theta=0.001)
+            value_iteration.value_iteration(max_iterations=2, theta=0.001)
 
             curr_trajectory = []
 
@@ -126,7 +128,7 @@ def main(args=None):
                 cumulative_reward += reward
                 
                 if args.verbose == 1:
-                    env.render(large=args.render_large, with_values=args.render_with_values)
+                    env.render(large=args.render_large, values=value_iteration.values)
                     print(f"s: {state}, a: {ACTION_ARROW_MAPPING.get(action)}, R: {reward}, Sum(R): {cumulative_reward} Done: {done}")
 
                 if done:

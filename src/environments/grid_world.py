@@ -91,8 +91,25 @@ class GridWorld:
         def sample(self):
             return random.choice(self.actions)
 
-    def get_actions(self, state):
-        return self.action_space.actions
+    def get_feasible_actions(self, state):
+        new_x, new_y = state[0], state[1]
+        feasible_actions = []
+        for action in self.action_space.actions:
+            new_x, new_y = state[0], state[1]
+            if action == self.action_space.UP:  # Up
+                new_x -= 1
+            elif action == self.action_space.RIGHT:  # Right
+                new_y += 1
+            elif action == self.action_space.DOWN:  # Down
+                new_x += 1
+            elif action == self.action_space.LEFT:  # Left
+                new_y -= 1   
+
+            if (new_x, new_y) not in self.walls:
+                feasible_actions.append(action)
+                
+        return feasible_actions
+
 
     def reset(self):
         # Start position
@@ -183,13 +200,13 @@ class GridWorld:
     def get_transition_prob(self, state, action):
         return 1.0
 
-    def render(self, large=False, with_values=False):
+    def render(self, large=False, values=None):
         """
             A : agent
             G : goal
             . : empty space
         """
-        if large and not with_values:
+        if large and values is None:
             for i in range(self.size):
                 row1 = ''
                 row2 = ''
@@ -219,9 +236,7 @@ class GridWorld:
                 print(row1)
                 print(row2)
                 print(row3) 
-        elif large and with_values:
-            import numpy as np 
-            values = np.zeros((self.size, self.size))
+        elif large and values is not None:
 
             if large:
                 for i in range(self.size):
@@ -247,8 +262,8 @@ class GridWorld:
                             content = '    .    '
                             color = WHITE_BACKGROUND
 
-
-                        content = f"  {values[(i, j)]:.2f}   " if (i, j) not in WALLS else '         '
+                        # sign = '+' if values[(i, j)] >= 0 else '-'
+                        content = f"  {values[(i, j)]:0>5.2f}  " if (i, j) not in WALLS else '         '
                         # Construct 3x6 rectangle for each cell
                         row1 += color + '         ' + RESET
                         row2 += color + '         ' + RESET

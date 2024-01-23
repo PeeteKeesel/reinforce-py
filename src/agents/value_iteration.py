@@ -52,9 +52,19 @@ class ValueIteration:
         self.mdp = mdp
         self.values = initial_values
 
+        # Set all walls to -np.inf.
+        for wall in self.mdp.walls:
+            self.values[wall] = -np.inf
+
     def value_iteration(self, max_iterations=10, theta=0.001):
 
         Q_table = QTable(self.mdp.size, self.mdp.action_space.actions)
+
+        # Set all walls to -np.inf.
+        for wall in self.mdp.walls:
+            for action in self.mdp.action_space.actions:
+                Q_table.set_Q_value(wall, action, -np.inf)
+
         new_values = np.zeros((self.mdp.size, self.mdp.size))
 
         for i in range(max_iterations):
@@ -63,8 +73,9 @@ class ValueIteration:
 
             for state in self.mdp.get_states():
                 print(f"{8*' '}state: {state}")
-                # pdb.set_trace()
-                for action in self.mdp.get_actions(state):
+
+                feasible_actions = self.mdp.get_feasible_actions(state)
+                for action in feasible_actions:
                     print(f"{12*' '}action: {action}")
 
                     next_state, reward, _ = self.mdp.simulate_action(state, action)
@@ -83,7 +94,12 @@ class ValueIteration:
                         )
                     )
 
-                max_a, max_Q_s_a = Q_table.get_max_Q(state, self.mdp.action_space.actions)
+                #     if state == (3,3):
+                #         pdb.set_trace()                    
+
+                # if state == (3,3):
+                #     pdb.set_trace()
+                max_a, max_Q_s_a = Q_table.get_max_Q(state, feasible_actions)
                 print(f"max_a: {max_a}, delta: {delta}, max_Q_s_a: {max_Q_s_a}, V_s: {V_s}")
                 delta = max(delta, abs(max_Q_s_a - V_s))
 
@@ -127,7 +143,7 @@ class ValueIteration:
         max_V = -np.inf
         best_actions = []
 
-        for action in self.mdp.get_actions(state):
+        for action in self.mdp.get_feasible_actions(state):
             nxt_state, _, _ = self.mdp.simulate_action(state, action)
             if nxt_state == state:
                 print(self.mdp.action_space.action_to_direction.get(action))

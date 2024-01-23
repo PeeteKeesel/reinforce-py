@@ -12,7 +12,7 @@ The following shows an example of the value function for different iterations.
 
 <!-- <img src="imgs/gridworld_10x10_after_1_iter.png">  -->
 
-| ![ex1](imgs/gridworld_10x10_after_1_iter.png) | ![ex2](imgs/gridworld_10x10_after_100_iters.png) |
+| ![imgs/gridworld_10x10_after_1_iter.png](imgs/gridworld_10x10_after_1_iter.png) | ![imgs/gridworld_10x10_after_100_iters.png](imgs/gridworld_10x10_after_100_iters.png) |
 |:--:| :--:| 
 | Value function after $1$ iteration | Value function after $100$ iteration |
 

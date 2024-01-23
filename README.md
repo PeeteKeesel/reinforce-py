@@ -10,19 +10,11 @@ We started by implemented the most trivial algorithm, _Value Iteration_, from sc
 
 The following shows an example of the value function for different iterations.
 
-<img src="imgs/gridworld_10x10_after_1_iter.png"> 
+<!-- <img src="imgs/gridworld_10x10_after_1_iter.png">  -->
 
-
-<div style="display: flex; justify-content: space-between;">
-    <figure style="text-align: center; width: 40%;">
-        <img src="imgs/gridworld_10x10_after_1_iter.png" alt="version_0_0_1" width="325">
-        <figcaption>After 1 value iteration.</figcaption>
-    </figure>
-    <figure style="text-align: center; width: 40%;">
-        <img src="imgs/gridworld_10x10_after_100_iters.png" alt="version_0_0_1" width="325">
-        <figcaption>After 100 value iterations.</figcaption>
-    </figure>
-</div>
+| ![ex1](imgs/gridworld_10x10_after_1_iter.png) | ![ex2](imgs/gridworld_10x10_after_100_iters.png) |
+|:--:| :--:| 
+| Value function after $1$ iteration | Value function after $100$ iteration |
 
 
 # 🏃 How to Run?

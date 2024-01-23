@@ -30,7 +30,7 @@ def parse_args(args=None):
     parser.add_argument('--verbose', type=int, default=1, help='verbosity level (default: 1)')
     parser.add_argument('--episodes', type=int, default=1, help='number of episodes (default: 1)')
     parser.add_argument('--timesteps', type=int, default=1_000, help='number of maximal timesteps (default: 1,000)')
-    parser.add_argument('--size', type=int, default=10, help='size of the gridworld (default: 10)')
+    parser.add_argument('--grid_size', type=int, default=10, help='size of the gridworld (default: 10)')
     parser.add_argument('--algo', type=str, default='value_iteration', help='algorithm (default: value_iteration)')
     parser.add_argument('--render_large', type=bool, default=False, help='render large gridworld (default: False)')
     parser.add_argument('--render_with_values', type=bool, default=False, help='render gridworld with value estimates (default: False)')
@@ -49,7 +49,7 @@ def main(args=None):
     # --- Run episodes ---
     for episode in range(args.episodes):
 
-        env = GridWorld(size=args.size)
+        env = GridWorld(size=args.grid_size)
         state = env.reset()
         done = False
 
@@ -94,10 +94,10 @@ def main(args=None):
             env.render(large=args.render_large, with_values=args.render_with_values)
 
             # Initialize the value function.
-            # values = {(x, y): 0 for x in range(args.size) for y in range(args.size)}
-            values = np.zeros((args.size, args.size))
+            # values = {(x, y): 0 for x in range(args.grid_size) for y in range(args.grid_size)}
+            values = np.zeros((args.grid_size, args.grid_size))
 
-            # values[(args.size - 1, args.size - 1)] = 0
+            # values[(args.grid_size - 1, args.grid_size - 1)] = 0
             print(values)
 
             # Initialize the value iteration algorithm.

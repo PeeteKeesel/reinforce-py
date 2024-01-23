@@ -10,14 +10,7 @@ We started by implemented the most trivial algorithm, _Value Iteration_, from sc
 
 The following shows an example of the value function for different iterations.
 
-![After 1 iteration](imgs/gridworld_10x10_after_1_iter.png)
-
-| ![After 1 iteration](reinforce-py/blob/ed37fe4c02b916627753d8cafecfcfcc34ce4b7f/imgs/gridworld_10x10_after_1_iter.png) | ![After 100 iterations](reinforce-py/blob/ed37fe4c02b916627753d8cafecfcfcc34ce4b7f/imgs/gridworld_10x10_after_100_iters.png) |
-|:--:| :--:| 
-| Value function after $1$ iteration | Value function after $100$ iteration |
-
-
-| ![test](https://github.com/PeeteKeesel/reinforce-py/blob/ed37fe4c02b916627753d8cafecfcfcc34ce4b7f/imgs/gridworld_10x10_after_1_iter.png) | ![After 100 iterations](reinforce-py/blob/ed37fe4c02b916627753d8cafecfcfcc34ce4b7f/imgs/gridworld_10x10_after_100_iters.png) |
+| ![After 1 iterationsst](https://github.com/PeeteKeesel/reinforce-py/blob/ed37fe4c02b916627753d8cafecfcfcc34ce4b7f/imgs/gridworld_10x10_after_1_iter.png) | ![After 100 iterations](https://github.com/PeeteKeesel/reinforce-py/blob/ed37fe4c02b916627753d8cafecfcfcc34ce4b7f/imgs/gridworld_10x10_after_100_iters.png) |
 |:--:| :--:| 
 | Value function after $1$ iteration | Value function after $100$ iteration |
 

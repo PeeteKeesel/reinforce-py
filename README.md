@@ -14,9 +14,11 @@ Run using
 python main.py \
     --verbose=1 \
     --episodes=1 \
-    --timesteps=5 \
+    --timesteps=1 \
     --size=10 \
-    --algo=value_iteration
+    --algo=value_iteration \
+    --render_large=True \
+    --render_with_values=True
 ```
 
 ## 📝 ToDo's

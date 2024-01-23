@@ -113,7 +113,15 @@ class GridWorld:
                 2 = down, 
                 3 = left
         """
-        new_x, new_y = self.x, self.y  # Set current position as default
+        new_x, new_y = self.x, self.y
+
+        # Compute the immediate reward r(s,a,s').
+        if (self.x, self.y) in NEGATIVE_STATES:
+            reward = -1.0
+        elif (self.x, self.y) == (self.goal_x, self.goal_y):
+            reward = 1.0
+        else:
+            reward = 0.0    
 
         if action == self.action_space.UP and self.x > 0:  # Up
             new_x -= 1
@@ -126,26 +134,28 @@ class GridWorld:
 
         # Check if the new position is a wall
         if (new_x, new_y) in self.walls:
-            # print(f"{4*' '}Ive tried to walk into a wall.")
-            reward = 0  # Reward for hitting a wall
+            reward = 0.0  # Reward for hitting a wall
             done = False
         else:
             # Update position if it's not a wall
             self.x, self.y = new_x, new_y
-            # Check if the goal is reached
-            if (self.x, self.y) == (self.goal_x, self.goal_y):
-                reward = 1
-            elif (self.x, self.y) in NEGATIVE_STATES:
-                reward = -1
-            else: 
-                reward = 0
             done = (self.x, self.y) == (self.goal_x, self.goal_y)
 
         return (self.x, self.y), reward, done
     
+
     def simulate_action(self, state, action):
         """Get the reward for a given state and action, w/o taking the action."""
         x, y = state[0], state[1]  # Set current position as default
+
+        # Compute the immediate reward r(s,a,s').
+        if (x, y) in NEGATIVE_STATES:
+            reward = -1.0
+        elif (x, y) == (self.goal_x, self.goal_y):
+            reward = 1.0
+        else:
+            reward = 0.0   
+
         new_x, new_y = x, y  # Set current position as default
 
         if action == self.action_space.UP and x > 0:  # Up
@@ -159,22 +169,13 @@ class GridWorld:
 
         print(f"(new_x, new_y): {(new_x, new_y)}   self.size: {self.size}")
 
+        # Check if the new position is a wall
         if (new_x, new_y) in self.walls:
             print(f"{4*' '}Ive tried to walk into a wall after {self.action_space.action_to_description.get(action)}.")
-            # New is old since we couldnt move.
             new_x, new_y = x, y 
-            reward = 0  # Reward for hitting a wall
+            reward = 0.0  # Reward for hitting a wall
             done = False
         else:
-            # Update position if it's not a wall
-            # self.x, self.y = new_x, new_y
-            # Check if the goal is reached
-            if (new_x, new_y) == (self.goal_x, self.goal_y):
-                reward = 1
-            elif (new_x, new_y) in NEGATIVE_STATES:
-                reward = -1
-            else: 
-                reward = 0
             done = (new_x, new_y) == (self.goal_x, self.goal_y)
 
         return (new_x, new_y), reward, done
@@ -182,22 +183,95 @@ class GridWorld:
     def get_transition_prob(self, state, action):
         return 1.0
 
-    def render(self):
+    def render(self, large=False, with_values=False):
         """
             A : agent
             G : goal
             . : empty space
         """
-        for i in range(self.size):
-            for j in range(self.size):
-                if (i, j) == (self.x, self.y):
-                    print(BLUE_BACKGROUND + ' A ' + RESET, end='')
-                elif (i, j) == (self.goal_x, self.goal_y):
-                    print(GREEN_BACKGROUND + ' G ' + RESET, end='')
-                elif (i, j) in WALLS:
-                    print(GREY_BACKGROUND + '   ' + RESET, end='')
-                elif (i, j) in NEGATIVE_STATES:
-                    print(RED_BACKGROUND + ' . ' + RESET, end='')
-                else:
-                    print(WHITE_BACKGROUND + ' . ' + RESET, end='')
-            print()
+        if large and not with_values:
+            for i in range(self.size):
+                row1 = ''
+                row2 = ''
+                row3 = ''
+                for j in range(self.size):
+                    if (i, j) == (self.x, self.y):
+                        content = '  A  '
+                        color = BLUE_BACKGROUND
+                    elif (i, j) == (self.goal_x, self.goal_y):
+                        content = '  G  '
+                        color = GREEN_BACKGROUND
+                    elif (i, j) in WALLS:
+                        content = '     '
+                        color = GREY_BACKGROUND
+                    elif (i, j) in NEGATIVE_STATES:
+                        content = '  .  '
+                        color = RED_BACKGROUND
+                    else:
+                        content = '  .  '
+                        color = WHITE_BACKGROUND
+
+                    # Construct 3x6 rectangle for each cell
+                    row1 += color + '     ' + RESET
+                    row2 += color + content + RESET
+                    row3 += color + '     ' + RESET
+
+                print(row1)
+                print(row2)
+                print(row3) 
+        elif large and with_values:
+            import numpy as np 
+            values = np.zeros((self.size, self.size))
+
+            if large:
+                for i in range(self.size):
+                    row1 = ''
+                    row2 = ''
+                    row3 = ''
+                    row4 = ''
+                    row5 = ''                                
+                    for j in range(self.size):
+                        if (i, j) == (self.x, self.y):
+                            content = '    A    '
+                            color = BLUE_BACKGROUND
+                        elif (i, j) == (self.goal_x, self.goal_y):
+                            content = '    G    '
+                            color = GREEN_BACKGROUND
+                        elif (i, j) in WALLS:
+                            content = '         '
+                            color = GREY_BACKGROUND
+                        elif (i, j) in NEGATIVE_STATES:
+                            content = '    .    '
+                            color = RED_BACKGROUND
+                        else:
+                            content = '    .    '
+                            color = WHITE_BACKGROUND
+
+
+                        content = f"  {values[(i, j)]:.2f}   " if (i, j) not in WALLS else '         '
+                        # Construct 3x6 rectangle for each cell
+                        row1 += color + '         ' + RESET
+                        row2 += color + '         ' + RESET
+                        row3 += color + content + RESET
+                        row4 += color + '         ' + RESET
+                        row5 += color + '         ' + RESET
+
+                    print(row1)
+                    print(row2)
+                    print(row3)
+                    print(row4)
+                    print(row5)              
+        else:    
+            for i in range(self.size):
+                for j in range(self.size):
+                    if (i, j) == (self.x, self.y):
+                        print(BLUE_BACKGROUND + ' A ' + RESET, end='')
+                    elif (i, j) == (self.goal_x, self.goal_y):
+                        print(GREEN_BACKGROUND + ' G ' + RESET, end='')
+                    elif (i, j) in WALLS:
+                        print(GREY_BACKGROUND + '   ' + RESET, end='')
+                    elif (i, j) in NEGATIVE_STATES:
+                        print(RED_BACKGROUND + ' . ' + RESET, end='')
+                    else:
+                        print(WHITE_BACKGROUND + ' . ' + RESET, end='')
+                print()

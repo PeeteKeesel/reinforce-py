@@ -2,6 +2,7 @@
 
 import sys
 import logging
+import numpy as np
 
 from argparse import ArgumentParser
 from src.environments.grid_world import GridWorld
@@ -31,6 +32,8 @@ def parse_args(args=None):
     parser.add_argument('--timesteps', type=int, default=1_000, help='number of maximal timesteps (default: 1,000)')
     parser.add_argument('--size', type=int, default=10, help='size of the gridworld (default: 10)')
     parser.add_argument('--algo', type=str, default='value_iteration', help='algorithm (default: value_iteration)')
+    parser.add_argument('--render_large', type=bool, default=False, help='render large gridworld (default: False)')
+    parser.add_argument('--render_with_values', type=bool, default=False, help='render gridworld with value estimates (default: False)')
 
     return parser.parse_args(args if args is not None else sys.argv[1:])
 
@@ -88,11 +91,13 @@ def main(args=None):
         # VALUE ITERATION #
         # ----------------------- #
         elif args.algo == 'value_iteration':
-            env.render()
+            env.render(large=args.render_large, with_values=args.render_with_values)
 
             # Initialize the value function.
-            values = {(x, y): 0 for x in range(args.size) for y in range(args.size)}
-            values[(args.size - 1, args.size - 1)] = 1
+            # values = {(x, y): 0 for x in range(args.size) for y in range(args.size)}
+            values = np.zeros((args.size, args.size))
+
+            # values[(args.size - 1, args.size - 1)] = 0
             print(values)
 
             # Initialize the value iteration algorithm.
@@ -100,7 +105,7 @@ def main(args=None):
                                              initial_values=values)
 
             # Run the value iteration algorithm.
-            value_iteration.value_iteration(max_iterations=10, theta=0.001)
+            value_iteration.value_iteration(max_iterations=1, theta=0.001)
 
             curr_trajectory = []
 
@@ -121,7 +126,7 @@ def main(args=None):
                 cumulative_reward += reward
                 
                 if args.verbose == 1:
-                    env.render()
+                    env.render(large=args.render_large, with_values=args.render_with_values)
                     print(f"s: {state}, a: {ACTION_ARROW_MAPPING.get(action)}, R: {reward}, Sum(R): {cumulative_reward} Done: {done}")
 
                 if done:

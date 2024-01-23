@@ -15,6 +15,7 @@ Q-table
 
 import numpy as np
 import random
+import pdb
 
 
 class QTable:
@@ -54,13 +55,7 @@ class ValueIteration:
     def value_iteration(self, max_iterations=10, theta=0.001):
 
         Q_table = QTable(self.mdp.size, self.mdp.action_space.actions)
-        # np.zeros(
-        #     (
-        #         self.mdp.size, 
-        #         self.mdp.size, 
-        #         len(self.mdp.action_space.actions)
-        #     )
-        # )
+        new_values = np.zeros((self.mdp.size, self.mdp.size))
 
         for i in range(max_iterations):
             print(f"{4*' '}iteration: {i}")
@@ -68,11 +63,12 @@ class ValueIteration:
 
             for state in self.mdp.get_states():
                 print(f"{8*' '}state: {state}")
+                # pdb.set_trace()
                 for action in self.mdp.get_actions(state):
                     print(f"{12*' '}action: {action}")
 
                     next_state, reward, _ = self.mdp.simulate_action(state, action)
-
+                    print(f"REWARD: {reward}")
                     V_s = self.values[state]
                     V_s_next = self.values[next_state]
 
@@ -86,44 +82,30 @@ class ValueIteration:
                             self.mdp.gamma * V_s_next
                         )
                     )
-                    # Q_table[state, action] = self.mdp.get_transition_prob(state, action) * \
-                    #     (
-                    #         reward + \
-                    #         self.mdp.gamma * V_s_next
-                    #     )
-                # print(Q_table.shape)
-                # print(Q_table[state])
-                # print(np.argmax(Q_table[state]))
+
                 max_a, max_Q_s_a = Q_table.get_max_Q(state, self.mdp.action_space.actions)
-                print(f"max_a: {max_a}, max_Q_s_a: {max_Q_s_a}")
-                # best_action = np.argmax(Q_table[state])
-                # print(f"best_action: {best_action}")
-                # print(f"Q_table: {Q_table}")
-                # print(f"state: {state}  best_action: {best_action}")
-                # print(f"Q_table[{state}] : {Q_table[state]}")
-                # print(f"Q_table[{state}, {best_action}] : {Q_table[state][best_action]}")
-                # print()
-                # max_Q_s_a = Q_table[state][best_action]
-                print(f"delta: {delta}, max_Q_s_a: {max_Q_s_a}, V_s: {V_s}")
+                print(f"max_a: {max_a}, delta: {delta}, max_Q_s_a: {max_Q_s_a}, V_s: {V_s}")
                 delta = max(delta, abs(max_Q_s_a - V_s))
 
-                self.values[state] = max_Q_s_a
+                new_values[state] = max_Q_s_a
 
-                # print(self.values)
+                # pdb.set_trace()
 
-            # Change is small enough.
+            # pdb.set_trace()
+
+            # Update the values.
+            self.values = new_values
+
+            # Check for convergence.
             if delta < theta:
                 break
 
         # Print values in the 10x10 grid world
-        
-        
         print()
         for i in range(10):
             for j in range(10):
-                # temp[i][j] = self.values[(i,j)]
-                value = self.values[(i,j)]  # Default to 0 if not found
-                formatted_value = f'{value:.2f}'  # Format to 2 decimal places                
+                value = self.values[(i,j)]
+                formatted_value = f'{value:0.2f}'
                 print(f' {formatted_value} ', end='')
             print()
         print()
@@ -134,8 +116,8 @@ class ValueIteration:
         for i in range(10):
             for j in range(10):
                 # temp[i][j] = self.values[(i,j)]
-                value = self.values[(i,j)]  # Default to 0 if not found
-                formatted_value = f'{value:.2f}'  # Format to 2 decimal places                
+                value = self.values[(i,j)]
+                formatted_value = f'{value:.2f}'
                 print(f' {formatted_value} ', end='')
             print()
         print()

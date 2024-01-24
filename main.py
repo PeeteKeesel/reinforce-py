@@ -87,7 +87,7 @@ def main(args=None):
         value_iteration.value_iteration(max_iterations=4, theta=0.001)
 
         # Derive the optimal policy from the optimal value function.
-        # TODO
+        policy = value_iteration.derive_policy()
 
     episodes_actions = []
     episodes_rewards = []

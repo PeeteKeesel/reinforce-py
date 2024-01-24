@@ -52,13 +52,4 @@ usage:
 
 ## 📝 ToDo's
 
-- [x] Implement the GridWorld environment
-  - [ ] Add arrows to the large GridWorld
-- [x] Implement random action selection
-  - [ ] Add unit tests for random action selection
-- [x] Implement Value Iteration
-  - [ ] Add unit tests for value iteration
-- [ ] Implement Policy Iteration
-  - [ ] Add unit tests for policy iteration
-- [ ] Implement unit-test structure to easily add tests
-- [ ] Implement [GridWorld DP](https://cs.stanford.edu/people/karpathy/reinforcejs/gridworld_dp.html)
+Added to `docs/changelog.md`

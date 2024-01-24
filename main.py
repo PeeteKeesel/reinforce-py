@@ -43,102 +43,74 @@ def parse_args(args=None):
 def main(args=None):
     args = parse_args(args)
 
+    env = GridWorld(size=args.grid_size)
+
+    # --------------------- #
+    # -- VALUE ITERATION -- #
+    # --------------------- #
+    if args.algo == 'value_iteration':
+        # Initialize the value function.
+        values = np.zeros((args.grid_size, args.grid_size))
+
+        # Initialize the value iteration algorithm.
+        value_iteration = ValueIteration(mdp=env, initial_values=values)
+
+        # Run the value iteration algorithm to find the value function
+        value_iteration.value_iteration(max_iterations=4, theta=0.001)
+
+        # Derive the optimal policy from the optimal value function.
+        # TODO
+
     episodes_actions = []
     episodes_rewards = []
 
     # --- Run episodes ---
     for episode in range(args.episodes):
-
-        env = GridWorld(size=args.grid_size)
         state = env.reset()
+        env.render(large=args.render_large, values=values)
         done = False
 
         timestep = 0
-        cumulative_reward = 0 # Return
+        cumulative_reward = 0  # Return
         
         episode_actions = []
         episode_rewards = []
 
+        # Run until done or maximal number of timesteps is reached.
+        while not done:
 
-        # ----------------------- #
-        # RANDOM ACTION SELECTION #
-        # ----------------------- #
-        if args.algo == 'random':
-            # Run until done or maximal number of timesteps is reached.
-            while not done:
-
-                # Choose an action.
+            if args.algo == 'random':
                 action = env.action_space.sample()
-
-                # Perform the action.
-                state, reward, done = env.step(action)
-
-                # All actions and rewards of this episode.
-                episode_actions.append(action)
-                episode_rewards.append(reward)
-
-                cumulative_reward += reward
-                
-                if args.verbose == 1:
-                    env.render()
-                    print(f"s: {state}, a: {ACTION_ARROW_MAPPING.get(action)}, R: {reward}, Sum(R): {cumulative_reward} Done: {done}")
-
-                timestep += 1
-                if timestep == args.timesteps: 
-                    break
-
-        # ----------------------- #
-        # VALUE ITERATION #
-        # ----------------------- #
-        elif args.algo == 'value_iteration':
-            
-
-            # Initialize the value function.
-            # values = {(x, y): 0 for x in range(args.grid_size) for y in range(args.grid_size)}
-            values = np.zeros((args.grid_size, args.grid_size))
-
-            env.render(large=args.render_large, values=values)
-
-            # values[(args.grid_size - 1, args.grid_size - 1)] = 0
-            print(values)
-
-            # Initialize the value iteration algorithm.
-            value_iteration = ValueIteration(mdp=env, 
-                                             initial_values=values)
-
-            # Run the value iteration algorithm.
-            value_iteration.value_iteration(max_iterations=100, theta=0.001)
-
-            curr_trajectory = []
-
-            # Run until done or maximal number of timesteps is reached.
-            while not done:
-
-                # Choose an action.
+                print(f"random action: {env.action_space.action_to_direction.get(action)}")
+            elif args.algo == 'value_iteration':
+                # action = value_iteration.derive_policy(state)
                 action = value_iteration.get_best_action(state)
-                print("best action: ", env.action_space.action_to_direction.get(action))
+                print(f"best action: {env.action_space.action_to_direction.get(action)}")
 
-                # Perform the action.
-                state, reward, done = env.step(action)
+            # Choose an action.
+            # action = value_iteration.get_best_action(state)
 
-                # All actions and rewards of this episode.
-                episode_actions.append(action)
-                episode_rewards.append(reward)
+            # Perform the action.
+            state, reward, done = env.step(action)
 
-                cumulative_reward += reward
-                
-                if args.verbose == 1:
-                    env.render(large=args.render_large, values=value_iteration.values)
-                    print(f"s: {state}, a: {ACTION_ARROW_MAPPING.get(action)}, R: {reward}, Sum(R): {cumulative_reward} Done: {done}")
+            # All actions and rewards of this episode.
+            episode_actions.append(action)
+            episode_rewards.append(reward)
 
-                if done:
-                    break
+            cumulative_reward += reward
+            
+            if args.verbose == 1:
+                env.render(large=args.render_large, values=value_iteration.values)
+                print(f"s: {state}, a: {ACTION_ARROW_MAPPING.get(action)}, R: {reward}, Sum(R): {cumulative_reward} Done: {done}")
 
-                timestep += 1
-                if timestep == args.timesteps: 
-                    break
+            if done:
+                break
 
-            print(f"episode_actions: {[env.action_space.action_to_direction.get(a) for a in episode_actions]}")
+            timestep += 1
+            if timestep == args.timesteps: 
+                break
+
+        print(f"episode_actions: {[env.action_space.action_to_direction.get(a) for a in episode_actions]}")
 
         # All actions and rewards of all episodes
         episodes_actions.append(episode_actions)

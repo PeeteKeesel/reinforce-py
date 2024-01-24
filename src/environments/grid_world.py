@@ -58,7 +58,8 @@ class GridWorld:
         self.reset()
 
     def get_states(self):
-        return self.states
+        """Return non-wall states"""
+        return [state for state in self.states if state not in self.walls]
 
     class ActionSpace:
         def __init__(self):
@@ -121,6 +122,9 @@ class GridWorld:
         self.goal_y = 5
 
         return (self.x, self.y)
+    
+    def is_goal_state(self, state) :
+        return state == (self.goal_x, self.goal_y)
 
     def step(self, action):
         """ Perform an action in the environment
@@ -184,7 +188,7 @@ class GridWorld:
         elif action == self.action_space.LEFT and y > 0:  # Left
             new_y -= 1
 
-        print(f"(new_x, new_y): {(new_x, new_y)}   self.size: {self.size}")
+        # print(f"(new_x, new_y): {(new_x, new_y)}   self.size: {self.size}")
 
         # Check if the new position is a wall
         if (new_x, new_y) in self.walls:

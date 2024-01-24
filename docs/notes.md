@@ -19,4 +19,4 @@ Note that the GridWorld states are indexed in the following matter, where a stat
 * In the GridWorld example when taking an action the _immediate reward_ is _always the same_. This is because in this example we have only assigned a single reward per state, which is the immediate reward for each action taken from this specific state.
   * Initially I made the error of using the reward of the next state as the reward in the Q-value calculation. This being said, I interpreted `r(s,a,s')` wrongly.
 * How to handle walls? I decided to calculate `feasible actions` which only returns the actions feasible from a given state. This excludes walls. Another solution would have been to set values of wall states initially to `-np.inf`.
-*
+* When updating the value function use the _old_ value function to update a value of a state. Not the _new_ on (if there already is one). This being said, initially I forgot to `copy` and just set `self.values = new_values` such that `self.values` and `new_values` were referring to the same object.

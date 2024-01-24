@@ -66,22 +66,29 @@ class ValueIteration:
                 Q_table.set_Q_value(wall, action, -np.inf)
 
         new_values = np.zeros((self.mdp.size, self.mdp.size))
+        for wall in self.mdp.walls:
+            new_values[wall] = -np.inf
 
         for i in range(max_iterations):
-            print(f"{4*' '}iteration: {i}")
+            # print(f"{4*' '}iteration: {i}")
             delta = 0.0
 
             for state in self.mdp.get_states():
-                print(f"{8*' '}state: {state}")
+                # if state == (6,6):
+                #     print(f"{8*' '}state: {state}")
+                #     print(self.values)
 
                 feasible_actions = self.mdp.get_feasible_actions(state)
                 for action in feasible_actions:
-                    print(f"{12*' '}action: {action}")
-
+                    # if state == (6,6):
+                    #     print(f"{12*' '}action: {action}")
+                    #     print(self.values)
+                    #     pdb.set_trace()
+                    
                     next_state, reward, _ = self.mdp.simulate_action(state, action)
-                    print(f"REWARD: {reward}")
+
                     V_s = self.values[state]
-                    V_s_next = self.values[next_state]
+                    V_s_next = self.values[next_state] if not self.mdp.is_goal_state(state) else 0.0
 
                     # Calculate the Q-value.
                     Q_table.set_Q_value(
@@ -94,23 +101,27 @@ class ValueIteration:
                         )
                     )
 
-                #     if state == (3,3):
-                #         pdb.set_trace()                    
-
-                # if state == (3,3):
-                #     pdb.set_trace()
                 max_a, max_Q_s_a = Q_table.get_max_Q(state, feasible_actions)
-                print(f"max_a: {max_a}, delta: {delta}, max_Q_s_a: {max_Q_s_a}, V_s: {V_s}")
+                # print(f"max_a: {max_a}, delta: {delta}, max_Q_s_a: {max_Q_s_a}, V_s: {V_s}")
                 delta = max(delta, abs(max_Q_s_a - V_s))
 
                 new_values[state] = max_Q_s_a
 
-                # pdb.set_trace()
 
             # pdb.set_trace()
 
             # Update the values.
-            self.values = new_values
+            self.values = new_values.copy()
+
+            # Print values in the 10x10 grid world
+            print()
+            for i in range(10):
+                for j in range(10):
+                    value = self.values[(i,j)]
+                    formatted_value = f'{value:0.2f}'
+                    print(f' {formatted_value} ', end='')
+                print()
+            print()
 
             # Check for convergence.
             if delta < theta:

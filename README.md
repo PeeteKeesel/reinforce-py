@@ -23,8 +23,8 @@ There are multiple parameters which can be chosen to set when running the `main.
 python main.py \
     --seed=42 \
     --verbose=1 \
-    --episodes=2 \
-    --timesteps=10 \
+    --episodes=1 \
+    --timesteps=1 \
     --grid_size=10 \
     --algo=value_iteration \
     --render_large=True \

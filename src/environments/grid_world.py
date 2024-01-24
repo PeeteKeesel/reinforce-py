@@ -266,13 +266,17 @@ class GridWorld:
                             content = '    .    '
                             color = WHITE_BACKGROUND
 
-                        # sign = '+' if values[(i, j)] >= 0 else '-'
                         content = f"  {values[(i, j)]:0>5.2f}  " if (i, j) not in WALLS else '         '
+                        arrow_content = '         '
+                        if (i, j) not in WALLS:
+                            arrows = list(self.action_space.action_to_direction.values())
+                            arrow_content = f' {arrows[0]} {arrows[1]} {arrows[2]} {arrows[3]} '
+
                         # Construct 3x6 rectangle for each cell
                         row1 += color + '         ' + RESET
                         row2 += color + '         ' + RESET
                         row3 += color + content + RESET
-                        row4 += color + '         ' + RESET
+                        row4 += color + arrow_content + RESET
                         row5 += color + '         ' + RESET
 
                     print(row1)

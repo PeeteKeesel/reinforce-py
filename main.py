@@ -84,7 +84,7 @@ def main(args=None):
         value_iteration = ValueIteration(mdp=env, initial_values=values)
 
         # Run the value iteration algorithm to find the value function
-        value_iteration.value_iteration(max_iterations=4, theta=0.001)
+        value_iteration.value_iteration(max_iterations=100, theta=0.001)
 
         # Derive the optimal policy from the optimal value function.
         policy = value_iteration.derive_policy()

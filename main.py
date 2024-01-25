@@ -95,7 +95,7 @@ def main(args=None):
     # --- Run episodes ---
     for episode in range(args.episodes):
         state = env.reset()
-        env.render(large=args.render_large, values=values)
+        env.render(large=args.render_large, values=values, policy=policy)
         done = False
 
         timestep = 0
@@ -113,7 +113,8 @@ def main(args=None):
                 )
             elif args.algo == "value_iteration":
                 # action = value_iteration.derive_policy(state)
-                action = value_iteration.get_best_action(state)
+                # action = value_iteration.get_best_action(state)
+                action = random.choice(policy[state])
                 print(
                     f"best action: {env.action_space.action_to_direction.get(action)}"
                 )
@@ -131,7 +132,7 @@ def main(args=None):
             cumulative_reward += reward
 
             if args.verbose == 1:
-                env.render(large=args.render_large, values=value_iteration.values)
+                env.render(large=args.render_large, values=value_iteration.values, policy=policy)
                 print(
                     f"s: {state}, a: {ACTION_ARROW_MAPPING.get(action)}, R: {reward}, Sum(R): {cumulative_reward} Done: {done}"
                 )

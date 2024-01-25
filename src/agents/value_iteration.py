@@ -54,6 +54,8 @@ class ValueIteration:
     def __init__(self, mdp, initial_values):
         self.mdp = mdp
         self.values = initial_values
+        self.x_dim = self.values.shape[0]
+        self.y_dim = self.values.shape[1]
 
         for wall in self.mdp.walls:
             self.values[wall] = -np.inf
@@ -102,7 +104,10 @@ class ValueIteration:
                         state,
                         action,
                         self.mdp.get_transition_prob(state, action)
-                        * (reward + self.mdp.gamma * V_s_next),
+                            * (
+                                reward + 
+                                    self.mdp.gamma * V_s_next
+                            ),
                     )
 
                 _, max_Q_s_a = Q_table.get_max_Q(state, feasible_actions)
@@ -137,35 +142,19 @@ class ValueIteration:
             print()
         print()
 
-    def get_best_action(self, state):
-        """Get the best action for a given state.
+    def _get_best_actions(self, state):
+        """Return a list of best actions for a given state."""
+        if self.mdp.is_goal_state(state):
+            return [] 
         
-        The best action is the action that maximizes the value function.
-        If multiple actions maximize the value function, one of them is
-        chosen at random.
-        """
-        print()
-        for i in range(10):
-            for j in range(10):
-                # temp[i][j] = self.values[(i,j)]
-                value = self.values[(i, j)]
-                formatted_value = f"{value:.2f}"
-                print(f" {formatted_value} ", end="")
-            print()
-        print()
-        print(f"self.values[{state}]: {self.values[state]}")
-
-        # Check all feasible actions from here and return the best one.
         max_V = -np.inf
         best_actions = []
 
         for action in self.mdp.get_feasible_actions(state):
             nxt_state, _, _ = self.mdp.simulate_action(state, action)
             if nxt_state == state:
-                print(self.mdp.action_space.action_to_direction.get(action))
                 continue
             V_nxt = self.values[nxt_state]
-            print(f"self.values[{nxt_state}]: {self.values[nxt_state]}")
             if V_nxt > max_V:
                 max_V = V_nxt
                 best_actions = [action]
@@ -174,4 +163,34 @@ class ValueIteration:
 
         print([self.mdp.action_space.action_to_direction.get(a) for a in best_actions])
 
-        return random.choice(best_actions)
+        return best_actions
+
+    def get_best_action(self, state):
+        """Randomly choose from all the best actions for a given state, if
+        there are more then one. Otherwise simply return the best action."""
+        return random.choice(self._get_best_actions(state))
+
+    def get_all_best_actions(self, state):
+        """Return all the best actions for a given state."""
+        return self._get_best_actions(state)
+
+    def derive_policy(self):
+        """Derive the optimal policy from the optimal value function after
+        value iteration has been run.
+        """
+        
+        # Note that there can be multiple optimal actions per state, namely
+        # those with the same value. In this case, we choose one of them at
+        # random.
+        optimal_policy = {} # np.zeros((self.mdp.size, self.mdp.size, len(self.mdp.action_space.actions)))
+
+        for i in range(self.x_dim):
+            for j in range(self.y_dim):
+                state = (i, j)
+                optimal_actions = self.get_all_best_actions(state)
+                optimal_policy[state] = optimal_actions
+
+        print('policy:')
+        print(optimal_policy)
+
+        return optimal_policy

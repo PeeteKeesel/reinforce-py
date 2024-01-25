@@ -5,6 +5,7 @@
 """
 
 import random
+import pdb
 
 # The following wall positions are as in
 #   https://cs.stanford.edu/people/karpathy/reinforcejs/gridworld_td.html
@@ -170,104 +171,183 @@ class GridWorld:
     def get_transition_prob(self, state, action):
         return 1.0
 
-    def render(self, large=False, values=None):
+    # ------------------------------------------- #
+    # -- Methods for rendering the environment -- #
+    # ------------------------------------------- #
+
+    def _get_cell_content_and_color(self, i, j, include_values, values):
+        """Return content and color for a specific cell."""
+        if (i, j) == (self.x, self.y):
+            content = "    A    " if include_values else "  A  "
+            color = BLUE_BACKGROUND
+        elif (i, j) == (self.goal_x, self.goal_y):
+            content = "    G    " if include_values else "  G  "
+            color = GREEN_BACKGROUND
+        elif (i, j) in self.walls:
+            content = "         "
+            color = GREY_BACKGROUND
+        elif (i, j) in self.negative_states:
+            content = "    .    " if include_values else "  .  "
+            color = RED_BACKGROUND
+        else:
+            content = "    .    " if include_values else "  .  "
+            color = WHITE_BACKGROUND
+
+        if include_values and (i, j) not in self.walls:
+            content = f"  {values[(i, j)]:0>5.2f}  "
+        return content, color
+
+    def _print_row(self, row_content):
+        """Print a row of the grid."""
+        print(row_content)
+
+    def render(self, large=False, values=None, policy=None):
         """
         A : agent
         G : goal
         . : empty space
         """
-        if large and values is None:
+        # policy = None
+        if large:
             for i in range(self.size):
-                row1 = ""
-                row2 = ""
-                row3 = ""
+                row1 = row2 = row3 = row4 = row5 = ""
                 for j in range(self.size):
-                    if (i, j) == (self.x, self.y):
-                        content = "  A  "
-                        color = BLUE_BACKGROUND
-                    elif (i, j) == (self.goal_x, self.goal_y):
-                        content = "  G  "
-                        color = GREEN_BACKGROUND
-                    elif (i, j) in self.walls:
-                        content = "     "
-                        color = GREY_BACKGROUND
-                    elif (i, j) in self.negative_states:
-                        content = "  .  "
-                        color = RED_BACKGROUND
-                    else:
-                        content = "  .  "
-                        color = WHITE_BACKGROUND
+                    content, color = self._get_cell_content_and_color(i, j, values is not None, values)
+
+                    arrow_content = "         "
+                    if (i, j) not in self.walls and values is not None:
+                        
+                        if policy:
+                            arrows = policy[(i, j)]
+                            all_arrows = list(self.action_space.action_to_direction.items())
+                            arrow_content = ' '
+                            for _, (arrow_as_number, arrow_as_sign) in enumerate(all_arrows):
+                                if arrow_as_number not in arrows:
+                                    arrow_content = f"{arrow_content}  "
+                                else:
+                                    arrow_content = f"{arrow_content}{arrow_as_sign} "
+                        else:
+                            arrows = list(self.action_space.action_to_direction.values())
+                            arrow_content = f" {arrows[0]} {arrows[1]} {arrows[2]} {arrows[3]} "
 
                     # Construct 3x6 rectangle for each cell
-                    row1 += color + "     " + RESET
-                    row2 += color + content + RESET
-                    row3 += color + "     " + RESET
+                    row1 += color + "         "   + RESET
+                    row2 += color + "         "   + RESET
+                    row3 += color + content       + RESET
+                    row4 += color + arrow_content + RESET
+                    row5 += color + "         "   + RESET
 
-                print(row1)
-                print(row2)
-                print(row3)
-        elif large and values is not None:
-            if large:
-                for i in range(self.size):
-                    row1 = ""
-                    row2 = ""
-                    row3 = ""
-                    row4 = ""
-                    row5 = ""
-                    for j in range(self.size):
-                        if (i, j) == (self.x, self.y):
-                            content = "    A    "
-                            color = BLUE_BACKGROUND
-                        elif (i, j) == (self.goal_x, self.goal_y):
-                            content = "    G    "
-                            color = GREEN_BACKGROUND
-                        elif (i, j) in self.walls:
-                            content = "         "
-                            color = GREY_BACKGROUND
-                        elif (i, j) in self.negative_states:
-                            content = "    .    "
-                            color = RED_BACKGROUND
-                        else:
-                            content = "    .    "
-                            color = WHITE_BACKGROUND
-
-                        content = (
-                            f"  {values[(i, j)]:0>5.2f}  "
-                            if (i, j) not in self.walls
-                            else "         "
-                        )
-                        arrow_content = "         "
-                        if (i, j) not in self.walls:
-                            arrows = list(
-                                self.action_space.action_to_direction.values()
-                            )
-                            arrow_content = (
-                                f" {arrows[0]} {arrows[1]} {arrows[2]} {arrows[3]} "
-                            )
-
-                        # Construct 3x6 rectangle for each cell
-                        row1 += color + "         " + RESET
-                        row2 += color + "         " + RESET
-                        row3 += color + content + RESET
-                        row4 += color + arrow_content + RESET
-                        row5 += color + "         " + RESET
-
-                    print(row1)
-                    print(row2)
-                    print(row3)
-                    print(row4)
-                    print(row5)
+                self._print_row(row1)
+                self._print_row(row2)
+                self._print_row(row3)
+                self._print_row(row4)
+                self._print_row(row5)
         else:
             for i in range(self.size):
                 for j in range(self.size):
-                    if (i, j) == (self.x, self.y):
-                        print(BLUE_BACKGROUND + " A " + RESET, end="")
-                    elif (i, j) == (self.goal_x, self.goal_y):
-                        print(GREEN_BACKGROUND + " G " + RESET, end="")
-                    elif (i, j) in self.walls:
-                        print(GREY_BACKGROUND + "   " + RESET, end="")
-                    elif (i, j) in self.negative_states:
-                        print(RED_BACKGROUND + " . " + RESET, end="")
-                    else:
-                        print(WHITE_BACKGROUND + " . " + RESET, end="")
-                print()
+                    _, color = self._get_cell_content_and_color(i, j, False, None)
+                    print(color + " . " + RESET, end="")
+                print()        
+
+
+    # def render(self, large=False, values=None):
+    #     """
+    #     A : agent
+    #     G : goal
+    #     . : empty space
+    #     """
+    #     if large and values is None:
+    #         for i in range(self.size):
+    #             row1 = ""
+    #             row2 = ""
+    #             row3 = ""
+    #             for j in range(self.size):
+    #                 if (i, j) == (self.x, self.y):
+    #                     content = "  A  "
+    #                     color = BLUE_BACKGROUND
+    #                 elif (i, j) == (self.goal_x, self.goal_y):
+    #                     content = "  G  "
+    #                     color = GREEN_BACKGROUND
+    #                 elif (i, j) in self.walls:
+    #                     content = "     "
+    #                     color = GREY_BACKGROUND
+    #                 elif (i, j) in self.negative_states:
+    #                     content = "  .  "
+    #                     color = RED_BACKGROUND
+    #                 else:
+    #                     content = "  .  "
+    #                     color = WHITE_BACKGROUND
+
+    #                 # Construct 3x6 rectangle for each cell
+    #                 row1 += color + "     " + RESET
+    #                 row2 += color + content + RESET
+    #                 row3 += color + "     " + RESET
+
+    #             print(row1)
+    #             print(row2)
+    #             print(row3)
+    #     elif large and values is not None:
+    #         if large:
+    #             for i in range(self.size):
+    #                 row1 = ""
+    #                 row2 = ""
+    #                 row3 = ""
+    #                 row4 = ""
+    #                 row5 = ""
+    #                 for j in range(self.size):
+    #                     if (i, j) == (self.x, self.y):
+    #                         content = "    A    "
+    #                         color = BLUE_BACKGROUND
+    #                     elif (i, j) == (self.goal_x, self.goal_y):
+    #                         content = "    G    "
+    #                         color = GREEN_BACKGROUND
+    #                     elif (i, j) in self.walls:
+    #                         content = "         "
+    #                         color = GREY_BACKGROUND
+    #                     elif (i, j) in self.negative_states:
+    #                         content = "    .    "
+    #                         color = RED_BACKGROUND
+    #                     else:
+    #                         content = "    .    "
+    #                         color = WHITE_BACKGROUND
+
+    #                     content = (
+    #                         f"  {values[(i, j)]:0>5.2f}  "
+    #                         if (i, j) not in self.walls
+    #                         else "         "
+    #                     )
+    #                     arrow_content = "         "
+    #                     if (i, j) not in self.walls:
+    #                         arrows = list(
+    #                             self.action_space.action_to_direction.values()
+    #                         )
+    #                         arrow_content = (
+    #                             f" {arrows[0]} {arrows[1]} {arrows[2]} {arrows[3]} "
+    #                         )
+
+    #                     # Construct 3x6 rectangle for each cell
+    #                     row1 += color + "         " + RESET
+    #                     row2 += color + "         " + RESET
+    #                     row3 += color + content + RESET
+    #                     row4 += color + arrow_content + RESET
+    #                     row5 += color + "         " + RESET
+
+    #                 print(row1)
+    #                 print(row2)
+    #                 print(row3)
+    #                 print(row4)
+    #                 print(row5)
+    #     else:
+    #         for i in range(self.size):
+    #             for j in range(self.size):
+    #                 if (i, j) == (self.x, self.y):
+    #                     print(BLUE_BACKGROUND + " A " + RESET, end="")
+    #                 elif (i, j) == (self.goal_x, self.goal_y):
+    #                     print(GREEN_BACKGROUND + " G " + RESET, end="")
+    #                 elif (i, j) in self.walls:
+    #                     print(GREY_BACKGROUND + "   " + RESET, end="")
+    #                 elif (i, j) in self.negative_states:
+    #                     print(RED_BACKGROUND + " . " + RESET, end="")
+    #                 else:
+    #                     print(WHITE_BACKGROUND + " . " + RESET, end="")
+    #             print()

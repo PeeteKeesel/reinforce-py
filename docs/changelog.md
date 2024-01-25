@@ -5,9 +5,8 @@
 Value Iteration
 
 * [X] (`24.01.2024`) Implement _value iteration_
-* [ ] Derive the optimal policy after running value iteration
-
-  * [ ] If there are multiple optimal actions per state, choose randomly
+* [X] (`25.01.2024`) Derive the optimal policy after running value iteration
+  * [X] (`25.01.2024`) If there are multiple optimal actions per state, choose randomly
 * [ ] Add unit tests for value iteration
 * [ ] Compare value iteration with random action selection
 
@@ -26,5 +25,5 @@ Other
 Environment
 
 * [ ] Add unit tests for the 10x10 GridWorld
-* [ ] Update the arrows in the large rendering using the current optimal policy from the respective `algo`
+* [X] (`25.01.2024`) Update the arrows in the large rendering using the current optimal policy from the respective `algo`
 * [ ] Change coloring of the states according to their value estimates

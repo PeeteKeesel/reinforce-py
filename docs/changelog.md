@@ -9,6 +9,7 @@ Value Iteration
   * [X] (`25.01.2024`) If there are multiple optimal actions per state, choose randomly
 * [ ] Add unit tests for value iteration
 * [ ] Compare value iteration with random action selection
+* [ ] Plot the number of iterations on the x-axis and the maximum change in value on the y-axis, to show how the value function converges over iterations
 
 Policy Iteration
 

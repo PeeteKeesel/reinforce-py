@@ -96,7 +96,7 @@ class ValueIteration:
                     V_s_next = (
                         self.values[next_state]
                         if not self.mdp.is_goal_state(state)
-                        else 0.0
+                        else self.values[(0,0)]
                     )
 
                     # Estimate the Q-value (state-action value).
@@ -118,19 +118,23 @@ class ValueIteration:
             # Update the value estimates.
             self.values = new_values.copy()
 
-            # Print values in the 10x10 grid world
-            print()
-            for i in range(10):
-                for j in range(10):
-                    value = self.values[(i, j)]
-                    formatted_value = f"{value:0.2f}"
-                    print(f" {formatted_value} ", end="")
-                print()
-            print()
+            # # Print values in the 10x10 grid world
+            # print()
+            # for i in range(10):
+            #     for j in range(10):
+            #         value = self.values[(i, j)]
+            #         formatted_value = f"{value:0.2f}"
+            #         print(f" {formatted_value} ", end="")
+            #     print()
+            # print()
 
             # Check for convergence.
             if delta < theta:
+                print(f"Converged after {i + 1} iterations.")
                 break
+
+        print(f"Max iterations reached ({max_iterations}).")
+        print(f"Final values after {i + 1} iterations:")
 
         # Print values in the 10x10 grid world
         print()
@@ -161,7 +165,7 @@ class ValueIteration:
             elif V_nxt == max_V:
                 best_actions.append(action)
 
-        print([self.mdp.action_space.action_to_direction.get(a) for a in best_actions])
+        # print([self.mdp.action_space.action_to_direction.get(a) for a in best_actions])
 
         return best_actions
 
@@ -190,7 +194,7 @@ class ValueIteration:
                 optimal_actions = self.get_all_best_actions(state)
                 optimal_policy[state] = optimal_actions
 
-        print('policy:')
-        print(optimal_policy)
+        # print('policy:')
+        # print(optimal_policy)
 
         return optimal_policy

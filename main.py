@@ -72,6 +72,7 @@ def main(args=None):
     args = parse_args(args)
 
     env = GridWorld(size=args.grid_size)
+    env.render(large=args.render_large, values=np.zeros((args.grid_size, args.grid_size)))
 
     # --------------------- #
     # -- VALUE ITERATION -- #
@@ -95,7 +96,7 @@ def main(args=None):
     # --- Run episodes ---
     for episode in range(args.episodes):
         state = env.reset()
-        env.render(large=args.render_large, values=values, policy=policy)
+        env.render(large=args.render_large, values=value_iteration.values, policy=policy)
         done = False
 
         timestep = 0
